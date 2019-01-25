@@ -1,4 +1,4 @@
-curl -X POST -d "email=user@example.com&url=http://site.com/file.txt" http://localhost:8000/submit
+curl -X POST -d "email=user@example.com&url=http://site.com/file.txt" http://127.0.0.1:5000/submit
 
 {"id":"0e4fac17-f367-4807-8c28-8a059a2f82ac"}
 
