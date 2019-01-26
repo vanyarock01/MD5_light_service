@@ -4,7 +4,7 @@ import requests
 import hashlib
 from celery_conf import app
 from app.db import db_execute, db_select
-import send_mail as mail
+from .send_mail import smtp_mail
 
 
 FORMAT = '%(levelname)-8s %(asctime)-15s %(name)-10s %(funcName)-10s %(lineno)-4d %(message)s'
