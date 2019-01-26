@@ -3,6 +3,7 @@ import requests
 import hashlib
 from celery_conf import app
 from app.db import db_execute, db_select
+import send_mail as mail
 
 
 FORMAT = '%(levelname)-8s %(asctime)-15s %(name)-10s %(funcName)-10s %(lineno)-4d %(message)s'
@@ -23,8 +24,14 @@ def calculate_task(self, url, email=''):
     if r.status_code == requests.codes.ok:
         hasher = hashlib.md5()
         hasher.update(r.content)
-        sql = "UPDATE tasks SET status=?, MD5=? WHERE task_id = ?"
+        md5 = hasher.hexdigest()
         db_execute(
-            sql, (r.status_code, hasher.hexdigest(), self.request.id))
-
+            "UPDATE tasks SET status=?, MD5=? WHERE task_id = ?",
+            (r.status_code, md5, self.request.id))
+        if email:
+            log.info(mail.smtp_mail(email, md5, url))
+    else: 
+        db_execute(
+            "UPDATE tasks SET status=? WHERE task_id = ?",
+            (r.status_code, self.request.id))
     return r.status_code
