@@ -3,6 +3,21 @@ from app.db import db_execute, db_select
 from app.task_processing.task_executer import add_task
 
 
+def make_responce(sql_row):
+    rec = {}
+    if sql_row is None:
+        rec['error'] = "unknown identifier"
+    elif sql_row[0] == 200:
+        rec['md5'] = sql_row[1]
+        rec['status'] = "done"
+        rec['url'] = sql_row[2]
+    elif sql_row[0] == 100:
+        rec['status'] = 'running'
+    else:
+        rec['status'] = sql_row[0]
+    return rec
+
+
 class Check(Resource):
     parser_get = reqparse.RequestParser()
     parser_get.add_argument('id', required=True)
@@ -12,21 +27,7 @@ class Check(Resource):
         task_id = args['id']
         sql_select = "SELECT status, MD5, url FROM tasks WHERE task_id=?"
         ans = db_select(sql_select, (task_id,))
-
-        if ans is None:
-            result = {"error": "unknown identifier"}
-        elif ans[0] == 200:
-            result = {
-                "md5": ans[1],
-                "status": "done",
-                "url": ans[2]}
-        elif ans[0] == 100:
-            result = {
-                "status": "running"}
-        else:
-            result = {
-                "status": ans[0]}
-        return result
+        return make_responce(ans)
 
 
 class Task(Resource):
