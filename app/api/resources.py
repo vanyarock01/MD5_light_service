@@ -45,4 +45,4 @@ class Task(Resource):
             task_id,
             100,
             '')), 201
-        return task_id
+        return {"id": task_id}

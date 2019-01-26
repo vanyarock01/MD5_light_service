@@ -30,7 +30,7 @@ def calculate_task(self, url, email=''):
             "UPDATE tasks SET status=?, MD5=? WHERE task_id = ?",
             (r.status_code, md5, self.request.id))
         if email:
-            log.info(mail.smtp_mail(email, md5, url))
+            log.info(smtp_mail(email, md5, url))
     else: 
         db_execute(
             "UPDATE tasks SET status=? WHERE task_id = ?",
